@@ -1,5 +1,5 @@
 <?
-class Parser /*extends AbstractClass*/ implements Template
+class Parser extends AbstractClass implements Template
 {
 	//today day + getter, setter
 	//private $today;
@@ -29,6 +29,31 @@ class Parser /*extends AbstractClass*/ implements Template
 		$this->setLastParser(file_get_contents("time"));
 	}
 	
+	public function executePars()
+	{
+		$html = $this->parsUrl($this->URL);
+		$list = $this->popularRegular($html);
+		return $list;
+	}
+	public function sortOldList($oldList, $newList){
+		$deleteList = array();
+		$updateList = array();
+		foreach ($oldList as $idkp => $value) {
+			if(array_key_exists($idkp,$newList))
+			{
+				unset($newList[$idkp]);
+				if($value != $newList[$idkp])
+					$updateList[$idkp] = $newList[$idkp];
+			}else{
+				$deleteList[$idkp] = $value;
+			}
+		}
+		return array(
+			"toDelte"=>$deleteList, 
+			"toUpdate"=>$updateList,
+			"toInsert"=>$newList
+		);
+	}
 	public function popularRegular ($content){
 		preg_match_all ('#href="\/film\/(\d+?)\/"\s+class="selection-film-item-meta__link"#', $content, $idkp_mass);
 		preg_match_all ('#class="selection-film-item-meta__name">(.*?)<#', $content, $title_mass);
